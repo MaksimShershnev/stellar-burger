@@ -50,7 +50,10 @@ const App = () => {
         <Route
           path='/feed/:number'
           element={
-            <Modal title={':number'} onClose={handleModalClose}>
+            <Modal
+              title={`#0${location.pathname.split('/feed/')[1]}`}
+              onClose={handleModalClose}
+            >
               <OrderInfo />
             </Modal>
           }
