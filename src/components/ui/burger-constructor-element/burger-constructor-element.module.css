@@ -1,12 +1,12 @@
 .element {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
 }
 
-/* .element:last-child {
+.element:last-child {
   margin-bottom: 0;
-} */
+}
 
 .element_fullwidth {
   display: flex;

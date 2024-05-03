@@ -13,19 +13,28 @@ import '../../index.css';
 import styles from './app.module.css';
 
 import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
-import { Route, Routes, useNavigate } from 'react-router-dom';
-// import { useEffect } from 'react';
-// import { fetchIngredients } from '../../services/slices/ingredientsSlice';
-// import { useDispatch, useSelector } from '../../services/store';
-// import { fetchFeeds } from '../../services/slices/feedsSlice';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { fetchIngredients } from '../../services/slices/ingredientsSlice';
+import { useDispatch, useSelector } from '../../services/store';
 
 const App = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const backgroundLocation = location.state?.background;
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchIngredients());
+  }, [dispatch]);
+
+  const handleModalClose = () => navigate(-1);
 
   return (
     <div className={styles.app}>
       <AppHeader />
-      <Routes>
+      <Routes location={backgroundLocation || location}>
         <Route path='/' element={<ConstructorPage />} />
         <Route path='/feed' element={<Feed />} />
         <Route path='/login' element={<Login />} />
@@ -41,12 +50,7 @@ const App = () => {
         <Route
           path='/feed/:number'
           element={
-            <Modal
-              title={'Title'}
-              onClose={() => {
-                console.log('close');
-              }}
-            >
+            <Modal title={':number'} onClose={handleModalClose}>
               <OrderInfo />
             </Modal>
           }
@@ -54,7 +58,7 @@ const App = () => {
         <Route
           path='/ingredients/:id'
           element={
-            <Modal title={'Детали ингредиента'} onClose={() => navigate('/')}>
+            <Modal title={'Детали ингредиента'} onClose={handleModalClose}>
               <IngredientDetails />
             </Modal>
           }
@@ -62,12 +66,7 @@ const App = () => {
         <Route
           path='/profile/orders/:number'
           element={
-            <Modal
-              title={'Title'}
-              onClose={() => {
-                console.log('close');
-              }}
-            >
+            <Modal title={'Title'} onClose={handleModalClose}>
               <OrderInfo />
             </Modal>
           }

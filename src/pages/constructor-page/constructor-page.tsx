@@ -13,12 +13,6 @@ import {
 
 export const ConstructorPage: FC = () => {
   /** TODO: взять переменную из стора */
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchIngredients());
-    // dispatch(fetchFeeds());
-  }, [dispatch]);
 
   const isIngredientsLoading = useSelector(selectIsLoading);
 
