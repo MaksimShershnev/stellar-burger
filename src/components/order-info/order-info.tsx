@@ -6,9 +6,9 @@ import { useDispatch, useSelector } from '../../services/store';
 import { useParams } from 'react-router-dom';
 import {
   clearOrderData,
-  fetchOrderData,
+  getOrderData,
   selectOrderData,
-  selectIsLoading
+  selectIsLoadingOrderData
 } from '../../services/slices/orderSlice';
 import { selectIngredients } from '../../services/slices/ingredientsSlice';
 
@@ -19,10 +19,10 @@ export const OrderInfo: FC = () => {
 
   useEffect(() => {
     dispatch(clearOrderData());
-    if (orderNumber) dispatch(fetchOrderData(parseInt(orderNumber)));
+    if (orderNumber) dispatch(getOrderData(parseInt(orderNumber)));
   }, [dispatch]);
 
-  const isLoadingData = useSelector(selectIsLoading);
+  const isLoadingData = useSelector(selectIsLoadingOrderData);
   const orderData = useSelector(selectOrderData);
   const ingredients = useSelector(selectIngredients);
 

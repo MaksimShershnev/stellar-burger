@@ -2,6 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import ingredientsReducer from './slices/ingredientsSlice';
 import feedsReducer from './slices/feedsSlice';
 import orderReducer from './slices/orderSlice';
+import userReducer from './slices/userSlice';
 import burgerConstructorReducer from './slices/burgerConstructorSlice';
 
 import {
@@ -14,7 +15,8 @@ const rootReducer = combineReducers({
   ingredients: ingredientsReducer,
   feeds: feedsReducer,
   burgerConstructor: burgerConstructorReducer,
-  order: orderReducer
+  order: orderReducer,
+  user: userReducer
 });
 
 const store = configureStore({

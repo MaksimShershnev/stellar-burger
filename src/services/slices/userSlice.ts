@@ -1,60 +1,142 @@
-import { getIngredientsApi } from '@api';
+import {
+  TLoginData,
+  TRegisterData,
+  getUserApi,
+  loginUserApi,
+  logoutApi,
+  registerUserApi,
+  updateUserApi
+} from '@api';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { TIngredient } from '@utils-types';
+import { TOrder, TUser } from '@utils-types';
+import { deleteCookie, setCookie } from '../../utils/cookie';
 
-export const fetchUser = createAsyncThunk('user/fetchUser', async () =>
-  getIngredientsApi()
+export const checkUserAuth = createAsyncThunk('user/checkUserAuth', async () =>
+  getUserApi()
 );
 
-type TIngredientState = {
-  ingredients: TIngredient[];
-  currentIngredient: TIngredient | null;
-  isLoading: boolean;
+export const fetchLoginUser = createAsyncThunk(
+  'user/fetchLoginUser',
+  async (userData: TLoginData) => loginUserApi(userData)
+);
+
+export const fetchLogoutUser = createAsyncThunk(
+  'user/fetchLogoutUser',
+  async () => logoutApi()
+);
+
+export const fetchUpdateUserData = createAsyncThunk(
+  'user/fetchUpdateUserData',
+  async (userData: Partial<TRegisterData>) => updateUserApi(userData)
+);
+
+export const fetchRegisterUser = createAsyncThunk(
+  'user/fetchRegisterUser',
+  async (userData: TRegisterData) => registerUserApi(userData)
+);
+
+type TUserState = {
+  isAuthChecked: boolean;
+  userData: TUser | null;
+  userOrders: TOrder[];
   error: string | null;
 };
 
-const initialState: TIngredientState = {
-  ingredients: [],
-  currentIngredient: null,
-  isLoading: false,
+const initialState: TUserState = {
+  isAuthChecked: false,
+  userData: null,
+  userOrders: [],
   error: null
 };
 
 export const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {
-    setIngredient: (state, action) => {
-      state.currentIngredient =
-        state.ingredients.find(
-          (ingredient) => ingredient._id === action.payload
-        ) || null;
-    }
-  },
+  reducers: {},
   selectors: {
-    // selectIngredients: (sliceState) => sliceState.ingredients,
-    // selectIsLoading: (sliceState) => sliceState.isLoading,
-    // selectIngredient: (sliceState) => sliceState.currentIngredient
+    isAuthCheckedSelector: (sliceState) => sliceState.isAuthChecked,
+    userDataSelector: (sliceState) => sliceState.userData
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchUser.pending, (state) => {
-        state.isLoading = true;
+      //------------------- checkAuth -----------------//
+      .addCase(checkUserAuth.pending, (state) => {
+        state.isAuthChecked = false;
         state.error = null;
       })
-      .addCase(fetchUser.rejected, (state, action) => {
-        state.isLoading = false;
+      .addCase(checkUserAuth.rejected, (state, action) => {
+        state.isAuthChecked = true;
         state.error = action.error.message || 'Something went wrong';
       })
-      .addCase(fetchUser.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.ingredients = action.payload;
+      .addCase(checkUserAuth.fulfilled, (state, action) => {
+        state.isAuthChecked = true;
+        state.userData = action.payload.user;
+        state.error = null;
+      })
+      //------------------- login -----------------//
+      .addCase(fetchLoginUser.pending, (state) => {
+        state.isAuthChecked = false;
+        state.error = null;
+      })
+      .addCase(fetchLoginUser.rejected, (state, action) => {
+        state.isAuthChecked = true;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(fetchLoginUser.fulfilled, (state, action) => {
+        state.isAuthChecked = true;
+        state.userData = action.payload.user;
+        localStorage.setItem('refreshToken', action.payload.refreshToken);
+        setCookie('accessToken', action.payload.accessToken);
+      })
+      //------------------- logout -----------------//
+      .addCase(fetchLogoutUser.pending, (state) => {
+        state.isAuthChecked = false;
+        state.error = null;
+      })
+      .addCase(fetchLogoutUser.rejected, (state, action) => {
+        state.isAuthChecked = true;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(fetchLogoutUser.fulfilled, (state, action) => {
+        state.isAuthChecked = true;
+        deleteCookie('accessToken');
+        localStorage.removeItem('refreshToken');
+        state.userData = null;
+      })
+      //------------------- register -----------------//
+      .addCase(fetchRegisterUser.pending, (state) => {
+        state.isAuthChecked = false;
+        state.error = null;
+      })
+      .addCase(fetchRegisterUser.rejected, (state, action) => {
+        state.isAuthChecked = true;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(fetchRegisterUser.fulfilled, (state, action) => {
+        state.isAuthChecked = true;
+        state.userData = action.payload.user;
+        localStorage.setItem('refreshToken', action.payload.refreshToken);
+        setCookie('accessToken', action.payload.accessToken);
+        state.error = null;
+      })
+      //------------------- updateUserData ----------------- //
+      .addCase(fetchUpdateUserData.pending, (state) => {
+        state.isAuthChecked = false;
+        state.error = null;
+      })
+      .addCase(fetchUpdateUserData.rejected, (state, action) => {
+        state.isAuthChecked = true;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(fetchUpdateUserData.fulfilled, (state, action) => {
+        state.isAuthChecked = true;
+        state.userData = action.payload.user;
         state.error = null;
       });
   }
 });
 
-// export const { setIngredient } = ingredientsSlice.actions;
-// export const {  } = ingredientsSlice.selectors;
+// export const { authChecked } = userSlice.actions;
+export const { isAuthCheckedSelector, userDataSelector } = userSlice.selectors;
 
 export default userSlice.reducer;

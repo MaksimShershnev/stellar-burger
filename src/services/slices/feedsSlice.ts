@@ -51,8 +51,6 @@ export const feedsSlice = createSlice({
         state.orders = action.payload.orders;
         state.total = action.payload.total;
         state.totalToday = action.payload.totalToday;
-        console.log(action.payload);
-        // state.orders = action.payload;
         state.error = null;
       });
   }

@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { orderBurgerApi } from '@api';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TIngredient, TConstructorIngredient, TOrder } from '@utils-types';
 
 type TBurgerConstructorState = {
@@ -6,17 +7,13 @@ type TBurgerConstructorState = {
     bun: TIngredient | null;
     ingredients: TConstructorIngredient[];
   };
-  orderRequest: boolean;
-  orderModalData: TOrder | null;
 };
 
 const initialState: TBurgerConstructorState = {
   constructorItems: {
     bun: null,
     ingredients: []
-  },
-  orderRequest: false,
-  orderModalData: null
+  }
 };
 
 export const burgerConstructorSlice = createSlice({
@@ -52,42 +49,26 @@ export const burgerConstructorSlice = createSlice({
         0,
         ingredient
       );
+    },
+    clearConstructorItems: (state) => {
+      state.constructorItems = {
+        bun: null,
+        ingredients: []
+      };
     }
   },
   selectors: {
-    selectRequest: (sliceState) => sliceState.orderRequest,
-    selectModalData: (sliceState) => sliceState.orderModalData,
     selectConstructorItems: (sliceState) => sliceState.constructorItems
   }
-  // extraReducers: (builder) => {
-  //   builder
-  //     .addCase(fetchFeeds.pending, (state) => {
-  //       state.isLoadingFeeds = true;
-  //       state.error = null;
-  //     })
-  //     .addCase(fetchFeeds.rejected, (state, action) => {
-  //       state.isLoadingFeeds = false;
-  //       state.error = action.error.message || 'Something went wrong';
-  //     })
-  //     .addCase(fetchFeeds.fulfilled, (state, action) => {
-  //       state.isLoadingFeeds = false;
-  //       state.orders = action.payload.orders;
-  //       state.total = action.payload.total;
-  //       state.totalToday = action.payload.totalToday;
-  //       console.log(action.payload);
-  //       // state.orders = action.payload;
-  //       state.error = null;
-  //     });
-  // }
 });
 
 export const {
   addIngredient,
   deleteIngredient,
   moveUpIngredient,
-  moveDownIngredient
+  moveDownIngredient,
+  clearConstructorItems
 } = burgerConstructorSlice.actions;
-export const { selectRequest, selectModalData, selectConstructorItems } =
-  burgerConstructorSlice.selectors;
+export const { selectConstructorItems } = burgerConstructorSlice.selectors;
 
 export default burgerConstructorSlice.reducer;
