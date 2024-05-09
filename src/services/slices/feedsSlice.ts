@@ -1,29 +1,33 @@
-import { getFeedsApi } from '@api';
+import * as burgerApi from '@api';
+import { TFeedsResponse } from '@api';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { TOrder } from '@utils-types';
+import { RequestStatus, SliceName, TOrder } from '@utils-types';
 
-export const fetchFeeds = createAsyncThunk('feeds/fetchFeeds', async () =>
-  getFeedsApi()
+export const fetchFeeds = createAsyncThunk<
+  TFeedsResponse,
+  void,
+  { extra: typeof burgerApi }
+>(
+  `${SliceName.feeds}/fetchFeeds`,
+  async (_, { extra: api }) => await api.getFeedsApi()
 );
 
 type TFeedState = {
   orders: TOrder[];
   total: number | null;
   totalToday: number | null;
-  isLoadingFeeds: boolean;
-  error: string | null;
+  requestStatus: RequestStatus;
 };
 
 const initialState: TFeedState = {
   orders: [],
   total: 0,
   totalToday: 0,
-  isLoadingFeeds: false,
-  error: null
+  requestStatus: RequestStatus.idle
 };
 
 export const feedsSlice = createSlice({
-  name: 'feeds',
+  name: SliceName.feeds,
   initialState,
   reducers: {
     clearFeeds: (state) => {
@@ -33,35 +37,27 @@ export const feedsSlice = createSlice({
   selectors: {
     selectOrders: (sliceState) => sliceState.orders,
     selectOrdersTotal: (sliceState) => sliceState.total,
-    selectOrdersTotalToday: (sliceState) => sliceState.totalToday,
-    selectIsLoadingFeeds: (sliceState) => sliceState.isLoadingFeeds
+    selectOrdersTotalToday: (sliceState) => sliceState.totalToday
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchFeeds.pending, (state) => {
-        state.isLoadingFeeds = true;
-        state.error = null;
+        state.requestStatus = RequestStatus.loading;
       })
-      .addCase(fetchFeeds.rejected, (state, action) => {
-        state.isLoadingFeeds = false;
-        state.error = action.error.message || 'Something went wrong';
+      .addCase(fetchFeeds.rejected, (state) => {
+        state.requestStatus = RequestStatus.error;
       })
       .addCase(fetchFeeds.fulfilled, (state, action) => {
-        state.isLoadingFeeds = false;
         state.orders = action.payload.orders;
         state.total = action.payload.total;
         state.totalToday = action.payload.totalToday;
-        state.error = null;
+        state.requestStatus = RequestStatus.success;
       });
   }
 });
 
 export const { clearFeeds } = feedsSlice.actions;
-export const {
-  selectOrders,
-  selectOrdersTotal,
-  selectOrdersTotalToday,
-  selectIsLoadingFeeds
-} = feedsSlice.selectors;
+export const { selectOrders, selectOrdersTotal, selectOrdersTotalToday } =
+  feedsSlice.selectors;
 
-export default feedsSlice.reducer;
+export default feedsSlice;

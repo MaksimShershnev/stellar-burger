@@ -7,24 +7,23 @@ import { useParams } from 'react-router-dom';
 import {
   clearOrderData,
   getOrderData,
-  selectOrderData,
-  selectIsLoadingOrderData
+  selectOrderData
 } from '../../services/slices/orderSlice';
 import { selectIngredients } from '../../services/slices/ingredientsSlice';
 
 export const OrderInfo: FC = () => {
   /** TODO: взять переменные orderData и ingredients из стора */
   const dispatch = useDispatch();
-  const orderNumber = useParams().number;
-
-  useEffect(() => {
-    dispatch(clearOrderData());
-    if (orderNumber) dispatch(getOrderData(parseInt(orderNumber)));
-  }, [dispatch]);
-
-  const isLoadingData = useSelector(selectIsLoadingOrderData);
+  const orderNumber = useParams().number || '';
   const orderData = useSelector(selectOrderData);
   const ingredients = useSelector(selectIngredients);
+
+  useEffect(() => {
+    if (+orderNumber !== orderData?.number) {
+      dispatch(clearOrderData());
+      dispatch(getOrderData(+orderNumber));
+    }
+  }, [dispatch, orderNumber, orderData]);
 
   /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
@@ -68,9 +67,8 @@ export const OrderInfo: FC = () => {
     };
   }, [orderData, ingredients]);
 
-  if (!orderInfo || isLoadingData) {
+  if (!orderInfo) {
     return <Preloader />;
   }
-
   return <OrderInfoUI orderInfo={orderInfo} />;
 };

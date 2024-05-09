@@ -1,13 +1,10 @@
-import { useDispatch, useSelector } from '../../services/store';
+import { useSelector } from '../../services/store';
 import { Navigate, useLocation } from 'react-router';
 import { Preloader } from '../ui/preloader';
 import {
-  checkUserAuth,
   isAuthCheckedSelector,
   userDataSelector
 } from '../../services/slices/userSlice';
-import { useEffect } from 'react';
-import { selectIsLoadingOrderData } from '../../services/slices/orderSlice';
 
 type ProtectedRouteProps = {
   onlyUnAuth?: boolean;
@@ -19,16 +16,11 @@ export const ProtectedRoute = ({
   children
 }: ProtectedRouteProps) => {
   const isAuthChecked = useSelector(isAuthCheckedSelector);
-  const isLoadingOrderData = useSelector(selectIsLoadingOrderData);
+
   const user = useSelector(userDataSelector);
   const location = useLocation();
-  const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(checkUserAuth());
-  }, [dispatch]);
-
-  if (!isAuthChecked && !isLoadingOrderData) {
+  if (!isAuthChecked) {
     return <Preloader />;
   }
 

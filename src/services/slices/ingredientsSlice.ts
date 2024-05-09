@@ -1,28 +1,32 @@
-import { getIngredientsApi } from '@api';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { TIngredient } from '@utils-types';
+import { SliceName, RequestStatus, TIngredient } from '@utils-types';
+import * as burgerApi from '@api';
 
-export const fetchIngredients = createAsyncThunk(
-  'ingredients/fetchIngredients',
-  async () => getIngredientsApi()
+export const fetchIngredients = createAsyncThunk<
+  TIngredient[],
+  void,
+  { extra: typeof burgerApi }
+>(
+  `${SliceName.ingredients}/fetchIngredients`,
+  async (_, { extra: api }) => await api.getIngredientsApi()
 );
 
 type TIngredientState = {
   ingredients: TIngredient[];
   currentIngredient: TIngredient | null;
-  isLoading: boolean;
+  requestStatus: RequestStatus;
   error: string | null;
 };
 
 const initialState: TIngredientState = {
   ingredients: [],
   currentIngredient: null,
-  isLoading: false,
+  requestStatus: RequestStatus.idle,
   error: null
 };
 
 export const ingredientsSlice = createSlice({
-  name: 'ingredients',
+  name: SliceName.ingredients,
   initialState,
   reducers: {
     setIngredient: (state, action) => {
@@ -34,29 +38,26 @@ export const ingredientsSlice = createSlice({
   },
   selectors: {
     selectIngredients: (sliceState) => sliceState.ingredients,
-    selectIsLoading: (sliceState) => sliceState.isLoading,
+    selectRequestStatus: (sliceState) => sliceState.requestStatus,
     selectIngredient: (sliceState) => sliceState.currentIngredient
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchIngredients.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
+        state.requestStatus = RequestStatus.loading;
       })
-      .addCase(fetchIngredients.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.error.message || 'Something went wrong';
+      .addCase(fetchIngredients.rejected, (state) => {
+        state.requestStatus = RequestStatus.error;
       })
       .addCase(fetchIngredients.fulfilled, (state, action) => {
-        state.isLoading = false;
         state.ingredients = action.payload;
-        state.error = null;
+        state.requestStatus = RequestStatus.success;
       });
   }
 });
 
 export const { setIngredient } = ingredientsSlice.actions;
-export const { selectIngredients, selectIsLoading, selectIngredient } =
+export const { selectIngredients, selectRequestStatus, selectIngredient } =
   ingredientsSlice.selectors;
 
-export default ingredientsSlice.reducer;
+export default ingredientsSlice;

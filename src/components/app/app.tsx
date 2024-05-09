@@ -16,20 +16,19 @@ import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { fetchIngredients } from '../../services/slices/ingredientsSlice';
-import { useDispatch, useSelector } from '../../services/store';
+import { useDispatch } from '../../services/store';
 import { ProtectedRoute } from '../protected-route/ProtectedRoute';
-import { checkUserAuth } from '../../services/slices/userSlice';
+import { checkUserAuth, authCheck } from '../../services/slices/userSlice';
 
 const App = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation();
   const backgroundLocation = location.state?.background;
 
-  const dispatch = useDispatch();
-
   useEffect(() => {
+    dispatch(checkUserAuth()).finally(() => dispatch(authCheck()));
     dispatch(fetchIngredients());
-    dispatch(checkUserAuth());
   }, [dispatch]);
 
   const handleModalClose = () => navigate(-1);
@@ -72,22 +71,24 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route
-          path='/profile'
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path='/profile/orders'
-          element={
-            <ProtectedRoute>
-              <ProfileOrders />
-            </ProtectedRoute>
-          }
-        />
+        <Route path='/profile'>
+          <Route
+            index
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='orders'
+            element={
+              <ProtectedRoute>
+                <ProfileOrders />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
         <Route path='*' element={<NotFound404 />} />
       </Routes>
 
