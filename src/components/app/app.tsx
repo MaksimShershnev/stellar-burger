@@ -38,7 +38,9 @@ const App = () => {
       <AppHeader />
       <Routes location={backgroundLocation || location}>
         <Route path='/' element={<ConstructorPage />} />
+        <Route path='/ingredients/:id' element={<IngredientDetails />} />
         <Route path='/feed' element={<Feed />} />
+        <Route path='/feed/:number' element={<OrderInfo />} />
         <Route
           path='/login'
           element={
@@ -88,44 +90,54 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path='orders/:number'
+            element={
+              <ProtectedRoute>
+                <OrderInfo />
+              </ProtectedRoute>
+            }
+          />
         </Route>
         <Route path='*' element={<NotFound404 />} />
       </Routes>
 
-      <Routes>
-        <Route
-          path='/feed/:number'
-          element={
-            <Modal
-              title={`Заказ #0${location.pathname.split('/feed/')[1]}`}
-              onClose={handleModalClose}
-            >
-              <OrderInfo />
-            </Modal>
-          }
-        />
-        <Route
-          path='/ingredients/:id'
-          element={
-            <Modal title={'Детали ингредиента'} onClose={handleModalClose}>
-              <IngredientDetails />
-            </Modal>
-          }
-        />
-        <Route
-          path='/profile/orders/:number'
-          element={
-            <ProtectedRoute>
+      {backgroundLocation && (
+        <Routes>
+          <Route
+            path='/feed/:number'
+            element={
               <Modal
-                title={`Заказ #0${location.pathname.split('/profile/orders/')[1]}`}
+                title={`Заказ #0${location.pathname.split('/feed/')[1]}`}
                 onClose={handleModalClose}
               >
                 <OrderInfo />
               </Modal>
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
+            }
+          />
+          <Route
+            path='/ingredients/:id'
+            element={
+              <Modal title={'Детали ингредиента'} onClose={handleModalClose}>
+                <IngredientDetails />
+              </Modal>
+            }
+          />
+          <Route
+            path='/profile/orders/:number'
+            element={
+              <ProtectedRoute>
+                <Modal
+                  title={`Заказ #0${location.pathname.split('/profile/orders/')[1]}`}
+                  onClose={handleModalClose}
+                >
+                  <OrderInfo />
+                </Modal>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      )}
     </div>
   );
 };

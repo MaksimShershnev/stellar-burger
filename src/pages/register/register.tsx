@@ -2,17 +2,20 @@ import { FC, SyntheticEvent, useState } from 'react';
 import { RegisterUI } from '@ui-pages';
 import { useDispatch } from '../../services/store';
 import { fetchRegisterUser } from '../../services/slices/userSlice';
+import { useForm } from '../../hooks/useForm';
 
 export const Register: FC = () => {
-  const [userName, setUserName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { values, handleChange } = useForm({
+    email: '',
+    password: '',
+    name: ''
+  });
   const dispatch = useDispatch();
 
   const userData = {
-    name: userName,
-    email,
-    password
+    name: values.name,
+    email: values.email,
+    password: values.password
   };
 
   const handleSubmit = (e: SyntheticEvent) => {
@@ -23,13 +26,11 @@ export const Register: FC = () => {
   return (
     <RegisterUI
       errorText=''
-      email={email}
-      userName={userName}
-      password={password}
-      setEmail={setEmail}
-      setPassword={setPassword}
-      setUserName={setUserName}
+      email={values.email}
+      userName={values.name}
+      password={values.password}
       handleSubmit={handleSubmit}
+      handleChange={handleChange}
     />
   );
 };
