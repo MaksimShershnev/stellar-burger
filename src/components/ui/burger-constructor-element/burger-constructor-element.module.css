@@ -1,7 +1,7 @@
 .element {
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: flex-end;
 }
 
 .element:last-child {

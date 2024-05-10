@@ -38,3 +38,18 @@ export type TUser = {
 };
 
 export type TTabMode = 'bun' | 'sauce' | 'main';
+
+export const enum SliceName {
+  order = 'order',
+  user = 'user',
+  burgerConstructor = 'burger-constructor',
+  feeds = 'feeds',
+  ingredients = 'ingredients'
+}
+
+export const enum RequestStatus {
+  idle = 'idle',
+  loading = 'loading',
+  success = 'success',
+  error = 'error'
+}
