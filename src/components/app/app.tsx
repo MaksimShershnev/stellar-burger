@@ -105,7 +105,7 @@ const App = () => {
       {backgroundLocation && (
         <Routes>
           <Route
-            path='/feed/:number'
+            path={`/feed/:number`}
             element={
               <Modal
                 title={`Заказ #0${location.pathname.split('/feed/')[1]}`}
@@ -116,7 +116,7 @@ const App = () => {
             }
           />
           <Route
-            path='/ingredients/:id'
+            path={`/ingredients/:id`}
             element={
               <Modal title={'Детали ингредиента'} onClose={handleModalClose}>
                 <IngredientDetails />
@@ -124,7 +124,7 @@ const App = () => {
             }
           />
           <Route
-            path='/profile/orders/:number'
+            path={`/profile/orders/:number`}
             element={
               <ProtectedRoute>
                 <Modal
