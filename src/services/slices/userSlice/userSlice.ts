@@ -7,8 +7,11 @@ import {
 } from '@api';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { RequestStatus, SliceName, TUser } from '@utils-types';
-import { deleteCookie, setCookie } from '../../utils/cookie';
-import { isActionPending, isActionRejected } from '../../utils/checkTypeAction';
+import { deleteCookie, setCookie } from '../../../utils/cookie';
+import {
+  isActionPending,
+  isActionRejected
+} from '../../../utils/checkTypeAction';
 import * as burgerApi from '@api';
 
 export const checkUserAuth = createAsyncThunk<
@@ -67,7 +70,7 @@ const initialState: TUserState = {
   requestStatus: RequestStatus.idle
 };
 
-export const userSlice = createSlice({
+const userSlice = createSlice({
   name: SliceName.user,
   initialState,
   reducers: {

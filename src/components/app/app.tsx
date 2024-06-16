@@ -15,10 +15,13 @@ import styles from './app.module.css';
 import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { fetchIngredients } from '../../services/slices/ingredientsSlice';
+import { fetchIngredients } from '../../services/slices/ingredientsSlice/ingredientsSlice';
 import { useDispatch } from '../../services/store';
 import { ProtectedRoute } from '../protected-route/ProtectedRoute';
-import { checkUserAuth, authCheck } from '../../services/slices/userSlice';
+import {
+  checkUserAuth,
+  authCheck
+} from '../../services/slices/userSlice/userSlice';
 
 const App = () => {
   const navigate = useNavigate();

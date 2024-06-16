@@ -26,7 +26,7 @@ const initialState: TFeedState = {
   requestStatus: RequestStatus.idle
 };
 
-export const feedsSlice = createSlice({
+const feedsSlice = createSlice({
   name: SliceName.feeds,
   initialState,
   reducers: {

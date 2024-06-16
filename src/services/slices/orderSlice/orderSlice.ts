@@ -1,7 +1,10 @@
 import { TOrderResponse, TNewOrderResponse } from '@api';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { RequestStatus, SliceName, TOrder } from '@utils-types';
-import { isActionPending, isActionRejected } from '../../utils/checkTypeAction';
+import {
+  isActionPending,
+  isActionRejected
+} from '../../../utils/checkTypeAction';
 import * as burgerApi from '@api';
 
 export const getOrderData = createAsyncThunk<
@@ -48,7 +51,7 @@ const initialState: TOrderState = {
   requestStatus: RequestStatus.idle
 };
 
-export const orderSlice = createSlice({
+const orderSlice = createSlice({
   name: SliceName.order,
   initialState,
   reducers: {

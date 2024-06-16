@@ -3,7 +3,7 @@ import { FC, SyntheticEvent, useEffect, useState } from 'react';
 import {
   fetchUpdateUserData,
   userDataSelector
-} from '../../services/slices/userSlice';
+} from '../../services/slices/userSlice/userSlice';
 import { useDispatch, useSelector } from '../../services/store';
 
 export const Profile: FC = () => {

@@ -2,7 +2,7 @@ import { FC, memo } from 'react';
 
 import { OrdersListProps } from './type';
 import { OrdersListUI, Preloader } from '@ui';
-import { requestStatus } from '../../services/slices/orderSlice';
+import { requestStatus } from '../../services/slices/orderSlice/orderSlice';
 import { useSelector } from '../../services/store';
 import { RequestStatus } from '@utils-types';
 

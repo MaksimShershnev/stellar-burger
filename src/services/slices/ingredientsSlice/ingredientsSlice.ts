@@ -11,7 +11,7 @@ export const fetchIngredients = createAsyncThunk<
   async (_, { extra: api }) => await api.getIngredientsApi()
 );
 
-type TIngredientState = {
+export type TIngredientState = {
   ingredients: TIngredient[];
   currentIngredient: TIngredient | null;
   requestStatus: RequestStatus;
@@ -25,7 +25,7 @@ const initialState: TIngredientState = {
   error: null
 };
 
-export const ingredientsSlice = createSlice({
+const ingredientsSlice = createSlice({
   name: SliceName.ingredients,
   initialState,
   reducers: {
@@ -45,13 +45,16 @@ export const ingredientsSlice = createSlice({
     builder
       .addCase(fetchIngredients.pending, (state) => {
         state.requestStatus = RequestStatus.loading;
+        state.error = null;
       })
-      .addCase(fetchIngredients.rejected, (state) => {
+      .addCase(fetchIngredients.rejected, (state, action) => {
         state.requestStatus = RequestStatus.error;
+        state.error = action.error.message || 'Произошла ошибка';
       })
       .addCase(fetchIngredients.fulfilled, (state, action) => {
         state.ingredients = action.payload;
         state.requestStatus = RequestStatus.success;
+        state.error = null;
       });
   }
 });
