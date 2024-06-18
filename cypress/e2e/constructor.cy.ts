@@ -1,13 +1,22 @@
+const modalContent = '[data-cy=modal-content]';
+const closeModalButton = '[data-cy=modal-content] button[type=button]';
+const constructor = '[data-cy=constructor]';
+const constructorIngredients = '[data-cy=constructor-ingredients]';
+const buns = '[data-cy=buns]';
+const mains = '[data-cy=mains]';
+const sauces = '[data-cy=sauces]';
+const ingredients = '[data-cy=ingredients]';
+
 describe('Блок E2E тестов>', function () {
   beforeEach(function () {
     cy.intercept('GET', 'api/ingredients', { fixture: 'ingredients.json' });
     cy.viewport(1280, 800);
-    cy.visit('http://localhost:4000');
+    cy.visit('/');
   });
 
   describe('Добавление ингредиента из списка ингредиентов в конструктор', function () {
     it('Добавление булки в конструктор', function () {
-      cy.get('[data-cy=buns]').contains('Добавить').click();
+      cy.get(buns).contains('Добавить').click();
       cy.get('[data-cy=constructor-bun-top]')
         .contains('Булка 1')
         .should('exist');
@@ -17,39 +26,35 @@ describe('Блок E2E тестов>', function () {
     });
 
     it('Добавление начинки в конструктор', function () {
-      cy.get('[data-cy=mains]').contains('Добавить').click();
-      cy.get('[data-cy=constructor-ingredients]')
-        .contains('Ингредиент 1')
-        .should('exist');
+      cy.get(mains).contains('Добавить').click();
+      cy.get(constructorIngredients).contains('Ингредиент 1').should('exist');
     });
 
     it('Добавление соуса в конструктор', function () {
-      cy.get('[data-cy=sauces]').contains('Добавить').click();
-      cy.get('[data-cy=constructor-ingredients]')
-        .contains('Соус 1')
-        .should('exist');
+      cy.get(sauces).contains('Добавить').click();
+      cy.get(constructorIngredients).contains('Соус 1').should('exist');
     });
   });
 
   describe('Работа модального окна', function () {
     it('Тест открытия модального окна с деталями ингредиента', function () {
-      cy.get('[data-cy=modal-content]').should('not.exist');
-      cy.get('[data-cy=ingredients]').contains('Булка 1').click();
-      cy.get('[data-cy=modal-content]').contains('Булка 1').should('exist');
+      cy.get(modalContent).should('not.exist');
+      cy.get(ingredients).contains('Булка 1').click();
+      cy.get(modalContent).contains('Булка 1').should('exist');
     });
 
     it('Тест закрытия модального окна по клику на кнопку Х', function () {
-      cy.get('[data-cy=ingredients]').contains('Булка 1').click();
-      cy.get('[data-cy=modal-content]').contains('Булка 1').should('exist');
-      cy.get('[data-cy=modal-content] button[type=button]').click();
-      cy.get('[data-cy=modal-content]').should('not.exist');
+      cy.get(ingredients).contains('Булка 1').click();
+      cy.get(modalContent).contains('Булка 1').should('exist');
+      cy.get(closeModalButton).click();
+      cy.get(modalContent).should('not.exist');
     });
 
     it('Тест закрытия модального окна по клику на оверлей', function () {
-      cy.get('[data-cy=ingredients]').contains('Булка 1').click();
-      cy.get('[data-cy=modal-content]').contains('Булка 1').should('exist');
+      cy.get(ingredients).contains('Булка 1').click();
+      cy.get(modalContent).contains('Булка 1').should('exist');
       cy.get('[data-cy=modal-overlay]').click('top', { force: true });
-      cy.get('[data-cy=modal-content]').should('not.exist');
+      cy.get(modalContent).should('not.exist');
     });
   });
 
@@ -62,7 +67,6 @@ describe('Блок E2E тестов>', function () {
 
       window.localStorage.setItem('refreshToken', JSON.stringify('123456789'));
       cy.setCookie('accessToken', JSON.stringify('987654321'));
-      cy.visit('http://localhost:4000');
     });
 
     afterEach(function () {
@@ -72,9 +76,9 @@ describe('Блок E2E тестов>', function () {
 
     it('Тест добавления ингредиентов и отправки заказа', function () {
       // добавляем ингредиенты, оформляем заказ
-      cy.get('[data-cy=buns]').contains('Добавить').click();
-      cy.get('[data-cy=mains]').contains('Добавить').click();
-      cy.get('[data-cy=sauces]').contains('Добавить').click();
+      cy.get(buns).contains('Добавить').click();
+      cy.get(mains).contains('Добавить').click();
+      cy.get(sauces).contains('Добавить').click();
       cy.get('[data-cy=order-total] button').click();
 
       // проверка состава добавленных игредиентов в принятом заказе
@@ -85,17 +89,16 @@ describe('Блок E2E тестов>', function () {
         });
 
       // проверяем номер заказа
-      cy.get('[data-cy=modal-content]').contains('12345').should('exist');
+      cy.get(modalContent).contains('12345').should('exist');
 
       // закрываем модальное окно и проверяем что модалки нет
-      cy.get('[data-cy=modal-content] button[type=button]').click();
-      cy.get('[data-cy=modal-content]').should('not.exist');
+      cy.get(closeModalButton).click();
+      cy.get(modalContent).should('not.exist');
       // проверяем, что конструктор очищен от булок и начинки
-      cy.get('[data-cy=constructor]').contains('Булка 1').should('not.exist');
-      cy.get('[data-cy=constructor]')
-        .contains('Ингредиент 1')
-        .should('not.exist');
-      cy.get('[data-cy=constructor]').contains('Соус 1').should('not.exist');
+      cy.get(constructor).as('constructor');
+      cy.get('@constructor').contains('Булка 1').should('not.exist');
+      cy.get('@constructor').contains('Ингредиент 1').should('not.exist');
+      cy.get('@constructor').contains('Соус 1').should('not.exist');
     });
   });
 });

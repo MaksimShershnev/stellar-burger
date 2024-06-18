@@ -35,7 +35,7 @@ export const fetchOrderBurger = createAsyncThunk<
   async (orderData, { extra: api }) => await api.orderBurgerApi(orderData)
 );
 
-type TOrderState = {
+export type TOrderState = {
   orderData: TOrder | null;
   userOrders: TOrder[];
   orderRequest: boolean;
