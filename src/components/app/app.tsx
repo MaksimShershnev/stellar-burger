@@ -15,10 +15,13 @@ import styles from './app.module.css';
 import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { fetchIngredients } from '../../services/slices/ingredientsSlice';
+import { fetchIngredients } from '../../services/slices/ingredientsSlice/ingredientsSlice';
 import { useDispatch } from '../../services/store';
 import { ProtectedRoute } from '../protected-route/ProtectedRoute';
-import { checkUserAuth, authCheck } from '../../services/slices/userSlice';
+import {
+  checkUserAuth,
+  authCheck
+} from '../../services/slices/userSlice/userSlice';
 
 const App = () => {
   const navigate = useNavigate();
@@ -105,7 +108,7 @@ const App = () => {
       {backgroundLocation && (
         <Routes>
           <Route
-            path='/feed/:number'
+            path={`/feed/:number`}
             element={
               <Modal
                 title={`Заказ #0${location.pathname.split('/feed/')[1]}`}
@@ -116,7 +119,7 @@ const App = () => {
             }
           />
           <Route
-            path='/ingredients/:id'
+            path={`/ingredients/:id`}
             element={
               <Modal title={'Детали ингредиента'} onClose={handleModalClose}>
                 <IngredientDetails />
@@ -124,7 +127,7 @@ const App = () => {
             }
           />
           <Route
-            path='/profile/orders/:number'
+            path={`/profile/orders/:number`}
             element={
               <ProtectedRoute>
                 <Modal

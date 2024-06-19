@@ -7,8 +7,11 @@ import {
 } from '@api';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { RequestStatus, SliceName, TUser } from '@utils-types';
-import { deleteCookie, setCookie } from '../../utils/cookie';
-import { isActionPending, isActionRejected } from '../../utils/checkTypeAction';
+import { deleteCookie, setCookie } from '../../../utils/cookie';
+import {
+  isActionPending,
+  isActionRejected
+} from '../../../utils/checkTypeAction';
 import * as burgerApi from '@api';
 
 export const checkUserAuth = createAsyncThunk<
@@ -24,18 +27,31 @@ export const fetchLoginUser = createAsyncThunk<
   TAuthResponse,
   TLoginData,
   { extra: typeof burgerApi }
->(
-  `${SliceName.user}/fetchLoginUser`,
-  async (userData, { extra: api }) => await api.loginUserApi(userData)
-);
+>(`${SliceName.user}/fetchLoginUser`, async (userData, { extra: api }) => {
+  try {
+    const result = await api.loginUserApi(userData);
+    localStorage.setItem('refreshToken', result.refreshToken);
+    setCookie('accessToken', result.accessToken);
+    return result;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+});
+
 export const fetchLogoutUser = createAsyncThunk<
   TServerResponse<{}>,
   void,
   { extra: typeof burgerApi }
->(
-  `${SliceName.user}/fetchLogoutUser`,
-  async (_, { extra: api }) => await api.logoutApi()
-);
+>(`${SliceName.user}/fetchLogoutUser`, async (_, { extra: api }) => {
+  try {
+    const result = await api.logoutApi();
+    deleteCookie('accessToken');
+    localStorage.removeItem('refreshToken');
+    return result;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+});
 
 export const fetchUpdateUserData = createAsyncThunk<
   TUserResponse,
@@ -50,12 +66,18 @@ export const fetchRegisterUser = createAsyncThunk<
   TAuthResponse,
   TRegisterData,
   { extra: typeof burgerApi }
->(
-  `${SliceName.user}/fetchRegisterUser`,
-  async (userData, { extra: api }) => await api.registerUserApi(userData)
-);
+>(`${SliceName.user}/fetchRegisterUser`, async (userData, { extra: api }) => {
+  try {
+    const result = await api.registerUserApi(userData);
+    localStorage.setItem('refreshToken', result.refreshToken);
+    setCookie('accessToken', result.accessToken);
+    return result;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+});
 
-type TUserState = {
+export type TUserState = {
   isAuthChecked: boolean;
   userData: TUser | null;
   requestStatus: RequestStatus;
@@ -67,7 +89,7 @@ const initialState: TUserState = {
   requestStatus: RequestStatus.idle
 };
 
-export const userSlice = createSlice({
+const userSlice = createSlice({
   name: SliceName.user,
   initialState,
   reducers: {
@@ -88,20 +110,14 @@ export const userSlice = createSlice({
       })
       .addCase(fetchLoginUser.fulfilled, (state, action) => {
         state.userData = action.payload.user;
-        localStorage.setItem('refreshToken', action.payload.refreshToken);
-        setCookie('accessToken', action.payload.accessToken);
         state.requestStatus = RequestStatus.success;
       })
       .addCase(fetchLogoutUser.fulfilled, (state) => {
-        deleteCookie('accessToken');
-        localStorage.removeItem('refreshToken');
         state.userData = null;
         state.requestStatus = RequestStatus.success;
       })
       .addCase(fetchRegisterUser.fulfilled, (state, action) => {
         state.userData = action.payload.user;
-        localStorage.setItem('refreshToken', action.payload.refreshToken);
-        setCookie('accessToken', action.payload.accessToken);
         state.requestStatus = RequestStatus.success;
       })
       .addCase(fetchUpdateUserData.fulfilled, (state, action) => {

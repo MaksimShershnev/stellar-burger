@@ -8,7 +8,7 @@ import {
   selectIngredient,
   selectIngredients,
   fetchIngredients
-} from '../../services/slices/ingredientsSlice';
+} from '../../services/slices/ingredientsSlice/ingredientsSlice';
 
 export const IngredientDetails: FC = () => {
   /** TODO: взять переменную из стора */

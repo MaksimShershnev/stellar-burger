@@ -83,7 +83,8 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, './dist'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
+    publicPath: process.env.PUBLIC_URL ? process.env.PUBLIC_URL : '/' // указываем путь, который будет добавляться перед подключением файлов
   },
   devServer: {
     static: path.join(__dirname, './dist'),

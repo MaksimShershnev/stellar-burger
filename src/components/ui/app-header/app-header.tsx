@@ -16,10 +16,11 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => (
       <div className={styles.menu_part_left}>
         <>
           <NavLink
-            to={'/'}
+            to={`/`}
             className={({ isActive }) =>
               isActive ? clsx(styles.link, styles.link_active) : styles.link
             }
+            end
           >
             <BurgerIcon type={'primary'} />
             <p className='text text_type_main-default ml-2 mr-10'>
@@ -29,7 +30,7 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => (
         </>
         <>
           <NavLink
-            to={'/feed'}
+            to={`/feed`}
             className={({ isActive }) =>
               isActive ? clsx(styles.link, styles.link_active) : styles.link
             }
@@ -44,7 +45,7 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => (
       </div>
       <div className={styles.link_position_last}>
         <NavLink
-          to={'/profile'}
+          to={`/profile`}
           className={({ isActive }) =>
             isActive ? clsx(styles.link, styles.link_active) : styles.link
           }

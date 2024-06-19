@@ -8,8 +8,8 @@ import {
   clearOrderData,
   getOrderData,
   selectOrderData
-} from '../../services/slices/orderSlice';
-import { selectIngredients } from '../../services/slices/ingredientsSlice';
+} from '../../services/slices/orderSlice/orderSlice';
+import { selectIngredients } from '../../services/slices/ingredientsSlice/ingredientsSlice';
 
 export const OrderInfo: FC = () => {
   /** TODO: взять переменные orderData и ingredients из стора */

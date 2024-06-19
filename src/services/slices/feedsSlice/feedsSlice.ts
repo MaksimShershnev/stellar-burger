@@ -12,7 +12,7 @@ export const fetchFeeds = createAsyncThunk<
   async (_, { extra: api }) => await api.getFeedsApi()
 );
 
-type TFeedState = {
+export type TFeedState = {
   orders: TOrder[];
   total: number | null;
   totalToday: number | null;
@@ -26,7 +26,7 @@ const initialState: TFeedState = {
   requestStatus: RequestStatus.idle
 };
 
-export const feedsSlice = createSlice({
+const feedsSlice = createSlice({
   name: SliceName.feeds,
   initialState,
   reducers: {

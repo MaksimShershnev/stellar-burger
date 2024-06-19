@@ -1,7 +1,7 @@
 import { FC, SyntheticEvent } from 'react';
 import { LoginUI } from '@ui-pages';
 import { useDispatch } from '../../services/store';
-import { fetchLoginUser } from '../../services/slices/userSlice';
+import { fetchLoginUser } from '../../services/slices/userSlice/userSlice';
 import { useForm } from '../../hooks/useForm';
 
 export const Login: FC = () => {

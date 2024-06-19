@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from '../../services/store';
 import {
   getUserOrders,
   selectUserOrders
-} from '../../services/slices/orderSlice';
+} from '../../services/slices/orderSlice/orderSlice';
 
 export const ProfileOrders: FC = () => {
   /** TODO: взять переменную из стора */
