@@ -3,6 +3,7 @@ import styles from './burger-constructor-element.module.css';
 import { ConstructorElement } from '@zlden/react-developer-burger-ui-components';
 import { BurgerConstructorElementUIProps } from './type';
 import { MoveButton } from '@zlden/react-developer-burger-ui-components';
+import { Reorder } from 'framer-motion';
 
 export const BurgerConstructorElementUI: FC<BurgerConstructorElementUIProps> =
   memo(
@@ -14,7 +15,10 @@ export const BurgerConstructorElementUI: FC<BurgerConstructorElementUIProps> =
       handleMoveDown,
       handleClose
     }) => (
-      <li className={`${styles.element} mb-4 mr-2`}>
+      <Reorder.Item
+        value={ingredient}
+        className={`${styles.element} mb-4 mr-2`}
+      >
         <MoveButton
           handleMoveDown={handleMoveDown}
           handleMoveUp={handleMoveUp}
@@ -29,6 +33,6 @@ export const BurgerConstructorElementUI: FC<BurgerConstructorElementUIProps> =
             handleClose={handleClose}
           />
         </div>
-      </li>
+      </Reorder.Item>
     )
   );

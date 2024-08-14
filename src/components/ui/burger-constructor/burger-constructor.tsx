@@ -5,6 +5,7 @@ import {
   CurrencyIcon
 } from '@zlden/react-developer-burger-ui-components';
 import styles from './burger-constructor.module.css';
+import { Reorder } from 'framer-motion';
 import { BurgerConstructorUIProps } from './type';
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorElement, Modal } from '@components';
@@ -16,7 +17,8 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
   price,
   orderModalData,
   onOrderClick,
-  closeOrderModal
+  closeOrderModal,
+  reloadIngredients
 }) => (
   <section className={styles.burger_constructor} data-cy='constructor'>
     {constructorItems.bun ? (
@@ -39,15 +41,21 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
         Выберите булки
       </div>
     )}
-    <ul className={styles.elements} data-cy='constructor-ingredients'>
+    <Reorder.Group
+      axis='y'
+      values={constructorItems.ingredients}
+      onReorder={reloadIngredients}
+      className={styles.elements}
+      data-cy='constructor-ingredients'
+    >
       {constructorItems.ingredients.length > 0 ? (
         constructorItems.ingredients.map(
-          (item: TConstructorIngredient, index: number) => (
+          (ingredient: TConstructorIngredient, index: number) => (
             <BurgerConstructorElement
-              ingredient={item}
+              ingredient={ingredient}
               index={index}
               totalItems={constructorItems.ingredients.length}
-              key={item.id}
+              key={ingredient.id}
             />
           )
         )
@@ -58,7 +66,7 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
           Выберите начинку
         </div>
       )}
-    </ul>
+    </Reorder.Group>
     {constructorItems.bun ? (
       <div
         className={`${styles.element} mt-4 mr-4`}

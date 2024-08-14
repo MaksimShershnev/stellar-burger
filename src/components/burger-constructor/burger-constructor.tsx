@@ -4,7 +4,8 @@ import { BurgerConstructorUI } from '@ui';
 import { useDispatch, useSelector } from '../../services/store';
 import {
   selectConstructorItems,
-  clearConstructorItems
+  clearConstructorItems,
+  setIngredients
 } from '../../services/slices/burgerConstructorSlice/burgerConstructorSlice';
 import {
   selectModalData,
@@ -44,6 +45,10 @@ export const BurgerConstructor: FC = () => {
     dispatch(clearOrderModalData());
   };
 
+  const reloadIngredients = (ings: TConstructorIngredient[]) => {
+    dispatch(setIngredients(ings));
+  };
+
   const price = useMemo(
     () =>
       (constructorItems.bun ? constructorItems.bun.price * 2 : 0) +
@@ -62,6 +67,7 @@ export const BurgerConstructor: FC = () => {
       orderModalData={orderModalData}
       onOrderClick={onOrderClick}
       closeOrderModal={closeOrderModal}
+      reloadIngredients={reloadIngredients}
     />
   );
 };
